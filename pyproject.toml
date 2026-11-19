@@ -1,0 +1,72 @@
+[project]
+name = "hermes-fleet"
+version = "0.1.0"
+description = "Desired-state control plane for hermes-agent profiles: skills, MCP servers, toolsets, OpenViking memory and knowledge bases."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "pydantic>=2.8",
+    "pydantic-settings>=2.4",
+    "sqlalchemy>=2.0.30",
+    "alembic>=1.13",
+    "ruamel.yaml>=0.18",
+    "filelock>=3.15",
+    "httpx>=0.27",
+    "cryptography>=43",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3",
+    "hypothesis>=6.100",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "detect-secrets>=1.5",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hermes_fleet"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "S"]
+ignore = ["S101", "S603", "S607", "RUF012", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S", "B017"]
+"scripts/**" = ["S"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+mypy_path = "src"
+packages = ["hermes_fleet"]
+warn_unused_ignores = false
+
+[[tool.mypy.overrides]]
+module = ["ruamel.*", "alembic.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+    "unit: pure logic, no external processes",
+    "hermes: needs the real hermes-agent v0.23.1 CLI (scripts/install-hermes.sh)",
+    "ovfake: runs against the in-process Fake OpenViking server",
+    "ovreal: contract tests against a real openviking-server (FLEET_OV_REAL_URL)",
+    "e2e: end-to-end flows against real Hermes + real OpenViking",
+]
+filterwarnings = ["ignore::DeprecationWarning", "ignore:Using `httpx` with:UserWarning", "ignore::Warning:fastapi.testclient"]

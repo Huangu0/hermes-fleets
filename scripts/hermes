@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+# Launcher for the pinned hermes-agent install (see scripts/install-hermes.sh, ADR-0004).
+# Resolution: $FLEET_HERMES_LAUNCHER, then ${FLEET_OPT:-<repo>/.cache/opt}/hermes-src/.hermes/bin/hermes
+#
+# Hermes v0.23.1 selects its dependency venv from $HERMES_HOME/installs/<key>; a fresh,
+# isolated HERMES_HOME has none and fails with ModuleNotFoundError. When HERMES_HOME is
+# set and lacks it, link it to the owning install's installs/ directory.
+here="$(cd "$(dirname "$0")/.." && pwd)"
+opt="${FLEET_OPT:-$here/.cache/opt}"
+launcher="${FLEET_HERMES_LAUNCHER:-$opt/hermes-src/.hermes/bin/hermes}"
+if [ ! -x "$launcher" ]; then
+  echo "hermes-agent not installed (looked for $launcher); run scripts/install-hermes.sh" >&2
+  exit 127
+fi
+installs="$(cd "$(dirname "$launcher")/../../.." && pwd)/installs"
+if [ -n "${HERMES_HOME:-}" ] && [ -d "$installs" ] && [ ! -e "$HERMES_HOME/installs" ]; then
+  mkdir -p "$HERMES_HOME" && ln -s "$installs" "$HERMES_HOME/installs" 2>/dev/null || true
+fi
+exec "$launcher" "$@"

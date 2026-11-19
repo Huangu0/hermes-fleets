@@ -1,0 +1,76 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+*.so
+
+# ---- virtualenvs / tool caches ----
+.venv/
+venv/
+env/
+.uv/
+.cache/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+
+# ---- secrets: never commit ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*
+*.secret
+secrets/
+.fleet-secret-key
+fernet.key
+ov.conf
+ov-*.conf
+*.token
+
+# ---- databases / runtime state ----
+*.db
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+*.sqlite3-wal
+*.sqlite3-shm
+data/
+var/
+.fleet-data/
+hermes-home/
+.hermes/
+ov-data/
+ov-workspace/
+*.log
+logs/
+
+# ---- large / downloaded artefacts ----
+models/
+*.gguf
+*.onnx
+*.safetensors
+*.bin
+*.tar.gz
+*.tar.xz
+*.zip
+
+# ---- editors / OS ----
+.idea/
+.vscode/
+*.swp
+.DS_Store
