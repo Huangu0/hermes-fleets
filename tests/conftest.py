@@ -122,3 +122,21 @@ def hermes_home(tmp_path: Path) -> Path:
 @pytest.fixture
 def hermes_settings(settings: Settings, hermes_bin: str, hermes_home: Path) -> Settings:
     return settings.model_copy(update={"hermes_bin": hermes_bin, "hermes_home": hermes_home})
+
+
+def run_hermes(
+    bin_: str, home: Path, *args: str, timeout: float = 240, extra_env: dict[str, str] | None = None
+) -> Any:
+    """Run the hermes CLI against an isolated home (test helper)."""
+    import os
+    import subprocess
+
+    env = {**os.environ, "HERMES_HOME": str(home), **(extra_env or {})}
+    return subprocess.run(
+        [bin_, *args],
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+        stdin=subprocess.DEVNULL,
+    )
